@@ -1,7 +1,8 @@
 # Sampler QR Generator and Scanning Scripts
-This project contains utilities for a hydrology fieldwork workflow:
 
 ## Description
+
+This project contains utilities for a hydrology fieldwork workflow:
 - Sampler is used to generate an xml file called FieldEntry.xml, which is fed into sampler_qr_generator.py.
 - sampler_qr_generator.py processes the xml into a separate xml block for each site.
 - The xml blocks are then encoded into a QR code for each site.
