@@ -3,6 +3,7 @@ import logging
 import xml.etree.ElementTree as ET
 import xml.dom.minidom as minidom
 import qrcode
+import textwrap
 from PIL import Image, ImageDraw, ImageFont
 
 def process_xml(xml_file_path):
@@ -36,9 +37,9 @@ def process_xml(xml_file_path):
                 # "RunDate": run_date,
                 "SiteName": sample.find('SiteName').text,
                 # "FormFile": sample.find('FormFile').text,
-                "FieldTech": params[0].attrib['Value'],
-                "CostCode": params[1].attrib['Value'],
-                "Project": params[2].attrib['Value'],
+                # "FieldTech": params[0].attrib['Value'],
+                # "CostCode": params[1].attrib['Value'],
+                # "Project": params[2].attrib['Value'],
                 "SampleID": sample_id,
             }
             
@@ -70,9 +71,9 @@ def process_xml(xml_file_path):
 def generate_qr_code_from_xml(xml_string, filename):
     # Create a QR code instance
     qr = qrcode.QRCode(
-        version=12,
+        version=10,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
-        # box_size=9,
+        # box_size=,
         border=4
     )
 
@@ -91,64 +92,72 @@ def create_printable_a4_page(qr_filenames, data_dicts, output_filename):
     # Define the size of the A4 page in pixels (at 300 DPI)
     a4_width, a4_height = 2480, 3508
 
-    # Calculate the number of QR codes per row and column
-    num_per_row = 4 
-    num_per_col = 4
-
-    # Calculate the size of each QR code on the A4 page
-    qr_width = a4_width // num_per_row
-    qr_height = qr_width
+    # Define the size of each cell in pixels (at 300 DPI)
+    cell_width, cell_height = 827, 425
+    
+    # Calculate the size of each code on the A4 page
+    qr_height = int(cell_height * .9)
+    qr_width = qr_height
+    
+    # Calculate the space between qr code and edge of cell
+    cell_buffer = (cell_height - qr_height) // 2
 
     # Create a new blank A4-sized image
     a4_page = Image.new("RGB", (a4_width, a4_height), (255, 255, 255))
 
+    # Define sizes of whitespace around the page
+    header = 68 # 5.8 mm = 68.5 px @ 300 DPI
+    footer = 17 # 1.43 mm = 16.9 px @ 300 DPI
+    margins = 9 # 0.78 mm = 8.85 pm @ 300 DPI
+    
+
     # Create a font for the text
     try:
-        font = ImageFont.truetype("arial.ttf", 20)
+        font = ImageFont.truetype("arial.ttf", 30)
     except IOError:
-        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 20) 
-        print(font.getbbox("BEEF"))
+        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 30) 
 
-    # Paste each QR code into the A4 page
-    for i, qr_filename in enumerate(qr_filenames):
+    # Paste each QR code into the A4 page...
+    for row, qr_filename in enumerate(qr_filenames):
+        
         qr_image = Image.open(qr_filename)
-        row = i // num_per_row
-        col = i % num_per_row
+        
+        text_data = data_dicts[row]
+        site_text = f"{text_data['SiteName']}"
+        id_text = f"ID: {text_data['SampleID']}" 
+        wrapped_text = textwrap.wrap(site_text, width=22)
+        wrapped_text += [id_text]
+        
+        final_text = "\n".join(wrapped_text)
+        print(final_text)
+        
+        # ...in triplicate (3 per row)
+        for col in range(3):
+            print(f"Cell: {row}, {col}")
+        
+            qr_image_resized = qr_image.resize((qr_width, qr_height))
+        
+            a4_page.paste(qr_image_resized, (margins + cell_buffer + (col * cell_width),
+                                        (header + cell_buffer + (row * cell_height))))
 
-        new_width = int(0.9*qr_width)        
-        buffer = (qr_width - new_width) // 2
-        qr_image_resized = qr_image.resize((new_width, new_width))
-        print(buffer)
-        a4_page.paste(qr_image_resized, (buffer + (col * qr_width),
-                                        (buffer + (row * qr_width))))
+            draw = ImageDraw.Draw(a4_page)
 
-        # Add text above and below the QR code
-        draw = ImageDraw.Draw(a4_page)
-        text_data = data_dicts[i]
-        # text_above = f"{text_data['Run']}\nRun ID: {text_data['RunID']}" 
-        text_below = f"{text_data['SiteName']}\nSample ID: {text_data['SampleID']}" 
-        # _, _, text_above_width, text_above_height = font.getbbox(text_above)
-        _, _, text_below_width, text_below_height = font.getbbox(text_below)
-
-        # print(text_below_width, text_below_height)
-        # print(text_above_width, text_above_height)
-        # text_pos_x_above = buffer + (col * qr_width + (qr_width - text_above_width) // 2)
-        text_pos_x_below = 2*buffer + (col * qr_width)
-        # text_pos_y_above = buffer//2 + row * (qr_height)
-        # print(text_pos_x_above, text_pos_y_above) 
-        text_pos_y_below = (row+1) * qr_height - 2*buffer
-        # draw.text((text_pos_x_above, text_pos_y_above),
-        #           text_above,
-        #           fill=(0, 0, 0),
-        #           font=font)
-        draw.text((text_pos_x_below, text_pos_y_below),
-                  text_below,
-                  fill=(0, 0, 0),
-                  font=font)
+            text_pos_x = margins + cell_buffer + (col * cell_width) + qr_width + (.2*cell_buffer)
+            text_pos_y = header + cell_buffer + (row * cell_height) + cell_buffer
+            print(text_pos_x, text_pos_y) 
+            
+            # # draw.text((text_pos_x_above, text_pos_y_above),
+            # #           text_above,
+            # #           fill=(0, 0, 0),
+            # #           font=font)
+            draw.text((text_pos_x, text_pos_y),
+                      final_text,
+                      fill=(0, 0, 0),
+                      font=font)
         
     # Save the A4 page as an image file
-    a4_page.save(output_filename)
-            
+    a4_page.convert('RGB').save(output_filename)
+
 def setup_logging(logging_level):
     # Set up logging based on the specified logging level
     logging.basicConfig(level=logging_level.upper(),
@@ -174,7 +183,7 @@ def main():
     # Call the function to process XML and generate QR codes
     run_id, data_dicts, qr_filenames = process_xml(args.xml_file)
 
-    page_filename = f"run_{run_id}_printable.png"
+    page_filename = f"run_{run_id}_printable.pdf"
 
     create_printable_a4_page(qr_filenames, data_dicts, page_filename)
 
