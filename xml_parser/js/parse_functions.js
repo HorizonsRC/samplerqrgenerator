@@ -10,12 +10,12 @@
  * Extracts the "Sample ID" from an XML string.
  *
  * @param {string} xmlString - The XML string to extract from.
- * @returns {string|null} The extracted Sample ID or null if not found.
+ * @returns {string|"ERROR:NOT FOUND"} The extracted Sample ID or "ERROR:NOT FOUND" if not found.
  */
 function extractSampleId(xmlString) {
   const sampleIdRegex = /<Sample\s+ID="([^"]+)">/;
   const sampleIdMatch = xmlString.match(sampleIdRegex);
-  const sampleId = sampleIdMatch ? sampleIdMatch[1] : null;
+  const sampleId = sampleIdMatch ? sampleIdMatch[1] : "ERROR:NOT FOUND";
   return sampleId;
 }
 
@@ -23,12 +23,12 @@ function extractSampleId(xmlString) {
  * Extracts the "SiteName" from an XML string.
  *
  * @param {string} xmlString - The XML string to extract from.
- * @returns {string|null} The extracted SiteName or null if not found.
+ * @returns {string|"ERROR:NOT FOUND"} The extracted SiteName or "ERROR:NOT FOUND" if not found.
  */
 function extractSiteName(xmlString) {
   const siteNameRegex = /<SiteName>(.*?)<\/SiteName>/;
   const siteNameMatch = xmlString.match(siteNameRegex);
-  const siteName = siteNameMatch ? siteNameMatch[1] : null;
+  const siteName = siteNameMatch ? siteNameMatch[1] : "ERROR:NOT FOUND";
   return siteName;
 }
 
@@ -36,12 +36,12 @@ function extractSiteName(xmlString) {
  * Extracts the "RunName" from an XML string.
  *
  * @param {string} xmlString - The XML string to extract from.
- * @returns {string|null} The extracted RunName or null if not found.
+ * @returns {string|"ERROR:NOT FOUND"} The extracted RunName or "ERROR:NOT FOUND" if not found.
  */
 function extractRunName(xmlString) {
   const runNameRegex = /<RunName>(.*?)<\/RunName>/;
   const runNameMatch = xmlString.match(runNameRegex);
-  const runName = runNameMatch ? runNameMatch[1] : null;
+  const runName = runNameMatch ? runNameMatch[1] : "NOT FOUND";
   return runName;
 }
 
@@ -49,12 +49,12 @@ function extractRunName(xmlString) {
  * Extracts the Field Technician name from an XML string.
  *
  * @param {string} xmlString - The XML string to extract from.
- * @returns {string|null} The extracted Field Technician name or null if not found.
+ * @returns {string|"ERROR:NOT FOUND"} The extracted Field Technician name or "ERROR:NOT FOUND" if not found.
  */
 function extractFieldTech(xmlString) {
   const fieldTechRegex = /<FieldTech>(.*?)<\/FieldTech>/;
   const fieldTechMatch = xmlString.match(fieldTechRegex);
-  const fieldTech = fieldTechMatch ? fieldTechMatch[1] : null;
+  const fieldTech = fieldTechMatch ? fieldTechMatch[1] : "ERROR:NOT FOUND";
   return fieldTech;
 }
 
@@ -62,12 +62,12 @@ function extractFieldTech(xmlString) {
  * Extracts the Cost Code name from an XML string.
  *
  * @param {string} xmlString - The XML string to extract from.
- * @returns {string|null} The extracted Cost Code name or null if not found.
+ * @returns {string|"ERROR:NOT FOUND"} The extracted Cost Code name or "ERROR:NOT FOUND" if not found.
  */
 function extractCostCode(xmlString) {
   const costCodeRegex = /<CostCode>(.*?)<\/CostCode>/;
   const costCodeMatch = xmlString.match(costCodeRegex);
-  const costCode = costCodeMatch ? costCodeMatch[1] : null;
+  const costCode = costCodeMatch ? costCodeMatch[1] : "ERROR:NOT FOUND";
   return costCode;
 }
 
@@ -75,11 +75,23 @@ function extractCostCode(xmlString) {
  * Extracts the Project name from an XML string.
  *
  * @param {string} xmlString - The XML string to extract from.
- * @returns {string|null} The extracted Project name or null if not found.
+ * @returns {string|"ERROR:NOT FOUND"} The extracted Project name or "ERROR:NOT FOUND" if not found.
  */
 function extractProject(xmlString) {
   const projectRegex = /<Project>(.*?)<\/Project>/;
   const projectMatch = xmlString.match(projectRegex);
-  const project = projectMatch ? projectMatch[1] : null;
+  const project = projectMatch ? projectMatch[1] : "ERROR:NOT FOUND";
   return project;
+}
+
+/**
+ * This is used for testing, please ignore
+ */
+module.exports = {
+  extractSampleId,
+  extractRunName,
+  extractSiteName,
+  extractFieldTech,
+  extractCostCode,
+  extractProject
 }
