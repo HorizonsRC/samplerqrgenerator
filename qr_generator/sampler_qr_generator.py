@@ -9,6 +9,9 @@ import os
 from typing import List, Tuple, Dict, Optional
 import re
 
+script_directory = os.path.dirname(os.path.abspath(__file__))
+logo_path = os.path.join(script_directory, "logo.png")
+
 def process_xml(xml_file_path: str) -> Tuple[str, List[Dict[str, str]], List[Image.Image]]:
     """
     Process an XML file containing run and sample data as generated from Sampler.
@@ -161,7 +164,7 @@ def create_printable_a4_page(qr_images: List[Image.Image], data_dicts: List[Dict
     
     # Define font size (could be done more clever i guess)
     font_size = cell_height // 12
-    text_block_length = cell_width // font_size
+    text_block_length = (.85 * cell_width) // font_size
 
     # Create a new blank A4-sized image
     a4_page = Image.new("RGB", (a4_width, a4_height), (255, 255, 255))
@@ -281,7 +284,7 @@ def create_printable_label_document(qr_images: List[Image.Image], data_dicts: Li
 
     font_size = label_height // 10
     logging.debug(f"Font size calculated as {font_size}")
-    text_block_length = label_width // font_size
+    text_block_length = int((.85 * label_width) // font_size)
     
     # Create a font for the text
     try:
@@ -295,7 +298,7 @@ def create_printable_label_document(qr_images: List[Image.Image], data_dicts: Li
 
     pages = []
 
-    logo_image = Image.open("logo.png")
+    logo_image = Image.open(logo_path)
 
     logo_width = int(0.25*label_height)
     logo_height = int(logo_width * (163/239))
@@ -345,11 +348,12 @@ def create_printable_label_document(qr_images: List[Image.Image], data_dicts: Li
 
 
 
-def setup_logging(logging_level):
+def setup_logging(logging_level, logfile):
     # Set up logging based on the specified logging level
     logging.basicConfig(level=logging_level.upper(),
                         format='%(asctime)s - %(levelname)s - %(message)s',
-                        datefmt='%Y-%m-%d %H:%M:%S')
+                        datefmt='%Y-%m-%d %H:%M:%S',
+                        filename=None, filemode='w')
 
 
 def format_argument(value):
@@ -381,6 +385,14 @@ def main():
         dest='multiples'
     )
     
+    parser.add_argument(
+        "-o", "--out",
+        type=str,
+        default=".",
+        help="directory to which to write the pdf and log files",
+        dest='outdir'
+    )
+    
     parser.add_argument('-q', '--quiet', action='store_const', const='CRITICAL', dest='logging_level',
                         default='INFO', help='Show only critical log messages')
     parser.add_argument('-c', '--concise', action='store_const', const='WARNING', dest='logging_level',
@@ -389,11 +401,10 @@ def main():
                         help='Show all log messages')
     parser.add_argument('--logfile', type=str, help="Indicate a file to which to save the logs")
 
-
     args = parser.parse_args()
 
     try:
-        setup_logging(args.logging_level)
+        setup_logging(args.logging_level, args.logfile)
         logging.info("Starting QR Generator.")
         logging.debug("Parsing Arguments.")
         logging.debug(f"Arguments supplied: {args}")
@@ -404,7 +415,7 @@ def main():
         logging.debug(f"XML file parsed for run {id}.")
         logging.debug(f"Data parsed from XML file: {data_dicts}")
 
-        page_filename = f"run_{run_id}_printable"
+        page_filename = os.path.join(f"{args.outdir}", f"run_{run_id}_printable")
 
         for pf in args.format:
             if pf == "a4":
