@@ -5,28 +5,18 @@ function testParserFunctions(filename) {
       console.error('Error reading CSV file:', err);
       return;
     }
+    runName = extractFunctions.extractRunName(data)
+    console.log('RunName:', runName)
 
     sampleId = extractFunctions.extractSampleId(data) 
     console.log('SampleId:', sampleId)
     
-    runName = extractFunctions.extractRunName(data)
-    console.log('RunName:', runName)
-    
-    fieldTech = extractFunctions.extractFieldTech(data)
-    console.log('FieldTech:', fieldTech)
-    
-    project = extractFunctions.extractProject(data)
-    console.log('Project:', project)
-
-    costCode = extractFunctions.extractCostCode(data)
-    console.log('CostCode:', costCode)
-
     siteName = extractFunctions.extractSiteName(data)
     console.log('SiteName:', siteName)
   });
   
 }
 
-const extractFunctions = require('./parse_functions')
+const extractFunctions = require('./parse_functions_latest')
 console.log(extractFunctions)
-testParserFunctions('../xml/20233622.xml') 
+testParserFunctions('../../test_payload.txt') 

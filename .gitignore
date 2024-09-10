@@ -1,14 +1,1 @@
-# XML files
-*.xml
-
-# PDF files
-*.pdf
-
-# Sampler FieldEntry.exe utility
-FieldEntry.exe
-
-# Sampler sends a bunch of forms that we don't need along with the xml. 
-*/Forms/*
-
-# Whatever this images
-Thumbs.db
+__pycache__/

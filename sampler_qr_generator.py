@@ -77,6 +77,69 @@ def process_xml(xml_file_path: str) -> Tuple[str, List[Dict[str, str]], List[Ima
 
     return run_id, data_dicts, qr_list
 
+def generate_qr_code_from_string(payload: str) -> Image.Image:
+    """
+    Generate a QR code image from any string.
+
+    Parameters
+    ----------
+    payload : str
+        The string to be encoded into the QR code.
+    filename : str
+        The filename to save the generated QR code image.
+
+    Returns
+    -------
+    Image.Image
+        A PIL Image object representing the generated QR code image.
+    """
+    qr = qrcode.QRCode(
+        version=9,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        border=8
+    )
+
+    # Add the string data to the QR code
+    qr.add_data(payload)
+    qr.make(fit=True)
+
+    # Create an image from the QR code data
+    qr_image = qr.make_image(fill_color="black", back_color="white")
+
+    return qr_image
+
+
+def generate_bar_code_from_string(payload: str) -> Image.Image:
+    """
+    Generate a QR code image from any string.
+
+    Parameters
+    ----------
+    payload : str
+        The string to be encoded into the QR code.
+    filename : str
+        The filename to save the generated QR code image.
+
+    Returns
+    -------
+    Image.Image
+        A PIL Image object representing the generated QR code image.
+    """
+    qr = qrcode.QRCode(
+        version=9,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        border=8
+    )
+
+    # Add the string data to the QR code
+    qr.add_data(payload)
+    qr.make(fit=True)
+
+    # Create an image from the QR code data
+    qr_image = qr.make_image(fill_color="black", back_color="white")
+
+    return qr_image
+
 
 def generate_qr_code_from_xml(xml_string: str) -> Image.Image:
     """
