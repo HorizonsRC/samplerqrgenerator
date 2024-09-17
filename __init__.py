@@ -18,7 +18,7 @@ class QRGenerator:
 
         output_dir = preregistration_data.GetSectionInfo("Sampler")["LabelOutputDir"]
 
-        file_prefix = os.path.join(output_dir, f"{run_name}{tech_name}")
+        file_prefix = os.path.join(output_dir, f"{run_name}_[{tech_name}]")
 
         payload_list = []
         image_list = []
@@ -46,7 +46,7 @@ class QRGenerator:
             data_dicts=payload_list,
             output_filename=f"{file_prefix}_qr_labels",
             dimensions=(62, 29),
-            multiples=10,
+            multiples=3,
         )
 
 
