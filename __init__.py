@@ -11,19 +11,19 @@ class QRGenerator:
         HilltopHost.LogInfo("You clicked the Notify Lab button.")
         HilltopHost.LogInfo("These are the samples:")
 
-        file = open("D:/HilltopDev/testlog.txt", "w")
-        file.write("Hi there.\n")
-
         run_name = preregistration_data.Run.RunName
+        run_date = preregistration_data.Run.RunDate
+        tech_name = preregistration_data.Run.TechnicianFirstName
 
-        file.write(f"Samples in the {run_name} run.\n")
-    
+        output_dir = preregistration_data.GetSectionInfo("Sampler")["LabelOutputDir"]
+
+        file_prefix = f"{output_dir}{run_name}_{run_date}_{tech_name}"
+
         payload_list = []
         image_list = []
     
         for sample in preregistration_data.Samples:
             HilltopHost.LogInfo(str(sample.SampleID))
-            file.write(f"SampleID={sample.SampleID}, SiteName={sample.SiteName}\n")
             payload_dict = {
                 "RunName": run_name,
                 "SampleID": sample.SampleID,
@@ -37,18 +37,17 @@ class QRGenerator:
         create_printable_a4_page(
             qr_images=image_list,
             data_dicts=payload_list,
-            output_filename="a4_test_sheet"
+            output_filename=f"{file_prefix}_qr_sheet"
         )
 
         create_printable_label_document(
             qr_images=image_list,
             data_dicts=payload_list,
-            output_filename="label_test_sheet",
+            output_filename=f"{file_prefix}_qr_labels",
             dimensions=(62, 29),
             multiples=10,
         )
 
-        file.close()
 
         response = HilltopHost.PreregistrationResult()
 

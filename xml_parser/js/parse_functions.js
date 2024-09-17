@@ -5,7 +5,7 @@ function extractSampleId(payload) {
     // Parse the JSON string into an object
     const data = JSON.parse(jsonString);
     // Return SampleId if it exists, otherwise return null
-    return data.SampleId || null;
+    return data.SampleID || null;
   } catch (error) {
     console.error('Error parsing JSON:', error);
     // Handle any parsing errors by returning null

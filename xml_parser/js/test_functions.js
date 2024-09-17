@@ -9,7 +9,7 @@ function testParserFunctions(filename) {
     console.log('RunName:', runName)
 
     sampleId = extractFunctions.extractSampleId(data) 
-    console.log('SampleId:', sampleId)
+    console.log('SampleID:', sampleId)
     
     siteName = extractFunctions.extractSiteName(data)
     console.log('SiteName:', siteName)
@@ -17,6 +17,6 @@ function testParserFunctions(filename) {
   
 }
 
-const extractFunctions = require('./parse_functions_latest')
+const extractFunctions = require('./parse_functions')
 console.log(extractFunctions)
 testParserFunctions('../../test_payload.txt') 

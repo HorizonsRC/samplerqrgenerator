@@ -40,7 +40,6 @@ def process_xml(xml_file_path: str) -> Tuple[str, List[Dict[str, str]], List[Ima
         run_id = run.attrib['ID']
         run_name = run.find('RunName').text
         logging.debug(f"Processing run: {run_name}")
-        run_date = run.find('RunDate').text
         
         # Iterate through each sample in the run
         for sample in run.findall('Sample'):
