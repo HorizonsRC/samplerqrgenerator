@@ -1,6 +1,7 @@
 import HilltopHost
 from .sampler_qr_generator import create_printable_a4_page, generate_qr_code_from_string, create_printable_label_document
 import json
+import os
 
 class QRGenerator:
 
@@ -12,12 +13,12 @@ class QRGenerator:
         HilltopHost.LogInfo("These are the samples:")
 
         run_name = preregistration_data.Run.RunName
-        run_date = preregistration_data.Run.RunDate
+        # run_date = preregistration_data.Run.RunDate
         tech_name = preregistration_data.Run.TechnicianFirstName
 
         output_dir = preregistration_data.GetSectionInfo("Sampler")["LabelOutputDir"]
 
-        file_prefix = f"{output_dir}{run_name}_{run_date}_{tech_name}"
+        file_prefix = os.path.join(output_dir, f"{run_name}{tech_name}")
 
         payload_list = []
         image_list = []
