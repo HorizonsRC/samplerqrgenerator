@@ -399,7 +399,8 @@ def create_printable_label_document(qr_images: List[Image.Image], data_dicts: Li
                   final_text,
                   fill=(0, 0, 0),
                   font=font)
-        # Save the A4 page as an image file
+
+        label_page.rotate(90)
         pages += [label_page]
 
     multipages = [x for x in pages for _ in range(multiples)]

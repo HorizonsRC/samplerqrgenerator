@@ -9,8 +9,8 @@ class QRGenerator:
         return "Ok"
 
     def send_preregistration_request(self, preregistration_data):
-        HilltopHost.LogInfo("You clicked the Notify Lab button.")
-        HilltopHost.LogInfo("These are the samples:")
+        HilltopHost.PostMessage("You clicked the Notify Lab button.")
+        HilltopHost.PostMessage("These are the samples:")
 
         run_name = preregistration_data.Run.RunName
         # run_date = preregistration_data.Run.RunDate
@@ -24,7 +24,7 @@ class QRGenerator:
         image_list = []
     
         for sample in preregistration_data.Samples:
-            HilltopHost.LogInfo(str(sample.SampleID))
+            HilltopHost.PostMessage(str(sample.SampleID))
             payload_dict = {
                 "RunName": run_name,
                 "SampleID": sample.SampleID,
@@ -32,7 +32,7 @@ class QRGenerator:
             }
             payload_list += [payload_dict]
             qr_image = generate_qr_code_from_string("json:" + json.dumps(payload_dict))
-            HilltopHost.LogInfo(json.dumps(payload_dict))
+            HilltopHost.PostMessage(json.dumps(payload_dict))
             image_list += [qr_image]
 
         create_printable_a4_page(

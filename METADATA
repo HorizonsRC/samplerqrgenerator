@@ -1,6 +1,0 @@
-Name: sampler-qr-generator
-Title: Sampler QR Generator
-Version: 1.0.0
-Metadata-Version: 1.0
-Feature: Sample preregistration
-MainClassName: QRGenerator
