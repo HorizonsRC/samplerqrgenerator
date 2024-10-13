@@ -7,7 +7,7 @@ Download the latest release binary file from the Releases section in the sidebar
 
 Open your Hilltop directory in a terminal emulator. You can do this by navigating to the directory in File Explorer, right-clicking in white space and hitting "Open in Terminal". (In Windows 11 you might have to hit "More options" or something to bring up to bring up the Windows 10 menu for some reason.)
 
-Enter the following commands
+Enter the following commands:
 
 32x:
 ```
@@ -32,5 +32,11 @@ PS C:\Hilltop> .\x64\Libs\python.exe -m pip install .\Plugins\samplerqrgenerator
 ```
 for the 64 bit version.
 
-That should do it? 
+Finally you need to specify the directory to which the plugin with save the qr code files that it creates. This configuration can be placed in your `HilltopSystem.dsn` file, under the `[Sampler]` heading, like this:
+
+```
+[Sampler]
+LabelOutputDir = \\directory\for\qr\code\output
+```
+
 
