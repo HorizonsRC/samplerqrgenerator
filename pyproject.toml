@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 requires-python = ">= 3.10.11"
 name = "samplerqrgenerator"
-version = "0.1.0"
+version = "v0.1.1"
 dependencies = [
     "qrcode",
     "Pillow",
@@ -13,5 +13,3 @@ dependencies = [
 
 [project.entry-points.'hilltop.preregistration']
 "QRGenerator" = 'samplerqrgenerator:QRGenerator'
-
- 
