@@ -14,6 +14,7 @@ class QRGenerator:
         return "Ok"
 
     def send_preregistration_request(self, preregistration_data):
+        HilltopHost.PostMessage("====================")
         HilltopHost.PostMessage("You clicked the Notify Lab button.")
         HilltopHost.PostMessage(
             "In addition to notifying the lab, this button also generates QR labels."
@@ -24,9 +25,9 @@ class QRGenerator:
         tech_name = preregistration_data.Run.TechnicianFirstName
 
         HilltopHost.PostMessage(
-            f"Generating QR codes for run {run_name} which was set up by {tech_name}.\n"
+            f"Generating QR codes for run {run_name} which was set up by {tech_name}."
         )
-
+        HilltopHost.PostMessage("--------------------")
         output_dir = preregistration_data.GetSectionInfo("Sampler")["LabelOutputDir"]
 
         file_prefix = os.path.join(output_dir, f"{run_name}_[{tech_name}]")
@@ -36,7 +37,8 @@ class QRGenerator:
 
         for sample in preregistration_data.Samples:
             HilltopHost.PostMessage(
-                f"Generating QR code for sample {sample.Sample} at {sample.SiteName}"
+                f" - Generating QR code for sample {sample.SampleID}"
+                f" at {sample.SiteName}"
             )
             payload_dict = {
                 "RunName": run_name,
@@ -47,10 +49,11 @@ class QRGenerator:
             qr_image = generate_qr_code_from_string("json:" + json.dumps(payload_dict))
             image_list += [qr_image]
 
-        HilltopHost.PostMessage(
-            f"Saving QR codes to {file_prefix}_qr_a4_sheet.pdf "
-            f"and {file_prefix}_qr_labels.pdf..."
-        )
+        HilltopHost.PostMessage("--------------------")
+        HilltopHost.PostMessage("Saving QR codes to files:")
+        HilltopHost.PostMessage(f" - {file_prefix}_qr_a4_sheet.pdf")
+        HilltopHost.PostMessage(f" - {file_prefix}_qr_labels.pdf")
+        HilltopHost.PostMessage("--------------------")
 
         create_printable_a4_page(
             qr_images=image_list,
@@ -66,11 +69,10 @@ class QRGenerator:
             multiples=2,
         )
 
-        HilltopHost.PostMessage(
-            f"Done! The QR codes have been saved to {output_dir}.\n"
-            "You may now close this dialog."
-        )
+        HilltopHost.PostMessage(f"Done! The QR codes have been saved to {output_dir}.")
+        HilltopHost.PostMessage("You may now close this dialog.")
 
+        HilltopHost.PostMessage("====================")
         response = HilltopHost.PreregistrationResult()
 
         return response

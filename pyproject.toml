@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 requires-python = ">= 3.10.11"
 name = "samplerqrgenerator"
-version = "v0.1.2"
+version = "v0.1.4"
 dependencies = [
     "qrcode",
     "Pillow",
