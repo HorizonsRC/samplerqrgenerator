@@ -1,7 +1,12 @@
 import HilltopHost
-from .sampler_qr_generator import create_printable_a4_page, generate_qr_code_from_string, create_printable_label_document
+from .sampler_qr_generator import (
+    create_printable_a4_page,
+    generate_qr_code_from_string,
+    create_printable_label_document,
+)
 import json
 import os
+
 
 class QRGenerator:
 
@@ -10,11 +15,17 @@ class QRGenerator:
 
     def send_preregistration_request(self, preregistration_data):
         HilltopHost.PostMessage("You clicked the Notify Lab button.")
-        HilltopHost.PostMessage("These are the samples:")
+        HilltopHost.PostMessage(
+            "In addition to notifying the lab, this button also generates QR labels."
+        )
+        HilltopHost.PostMessage("--------------------")
 
         run_name = preregistration_data.Run.RunName
-        # run_date = preregistration_data.Run.RunDate
         tech_name = preregistration_data.Run.TechnicianFirstName
+
+        HilltopHost.PostMessage(
+            f"Generating QR codes for run {run_name} which was set up by {tech_name}.\n"
+        )
 
         output_dir = preregistration_data.GetSectionInfo("Sampler")["LabelOutputDir"]
 
@@ -22,9 +33,11 @@ class QRGenerator:
 
         payload_list = []
         image_list = []
-    
+
         for sample in preregistration_data.Samples:
-            HilltopHost.PostMessage(str(sample.SampleID))
+            HilltopHost.PostMessage(
+                f"Generating QR code for sample {sample.Sample} at {sample.SiteName}"
+            )
             payload_dict = {
                 "RunName": run_name,
                 "SampleID": sample.SampleID,
@@ -32,13 +45,17 @@ class QRGenerator:
             }
             payload_list += [payload_dict]
             qr_image = generate_qr_code_from_string("json:" + json.dumps(payload_dict))
-            HilltopHost.PostMessage(json.dumps(payload_dict))
             image_list += [qr_image]
+
+        HilltopHost.PostMessage(
+            f"Saving QR codes to {file_prefix}_qr_a4_sheet.pdf "
+            f"and {file_prefix}_qr_labels.pdf..."
+        )
 
         create_printable_a4_page(
             qr_images=image_list,
             data_dicts=payload_list,
-            output_filename=f"{file_prefix}_qr_sheet"
+            output_filename=f"{file_prefix}_qr_a4_sheet",
         )
 
         create_printable_label_document(
@@ -46,9 +63,13 @@ class QRGenerator:
             data_dicts=payload_list,
             output_filename=f"{file_prefix}_qr_labels",
             dimensions=(62, 29),
-            multiples=3,
+            multiples=2,
         )
 
+        HilltopHost.PostMessage(
+            f"Done! The QR codes have been saved to {output_dir}.\n"
+            "You may now close this dialog."
+        )
 
         response = HilltopHost.PreregistrationResult()
 
