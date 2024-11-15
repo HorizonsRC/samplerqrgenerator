@@ -19,4 +19,4 @@ function testParserFunctions(filename) {
 
 const extractFunctions = require('./parse_functions')
 console.log(extractFunctions)
-testParserFunctions('../../test_payload.txt') 
+testParserFunctions('../test_payload.txt') 
